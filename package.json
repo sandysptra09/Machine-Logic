@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroui/react": "^2.7.6",
+    "code": "^5.2.4",
     "framer-motion": "^12.7.1",
     "next": "15.3.0",
     "react": "^19.0.0",
