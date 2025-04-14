@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
@@ -8,6 +7,11 @@ import { Providers } from "./providers";
 // import statics components
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+
+export const metadata = {
+  title: "Machine Logic",
+  description: "Spin the logic reels, master boolean expressions, and boost your brain power!",
+};
 
 const poppins = Poppins({
   variable: "--font-poppins",
