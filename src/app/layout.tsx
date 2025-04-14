@@ -7,6 +7,7 @@ import { Providers } from "./providers";
 
 // import statics components
 import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -31,6 +32,8 @@ export default function RootLayout({
             <Navbar />
 
             {children}
+
+            <Footer />
 
           </div>
 
