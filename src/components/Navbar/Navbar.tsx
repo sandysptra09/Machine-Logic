@@ -12,7 +12,6 @@ import {
     NavbarMenu,
     NavbarMenuItem,
     Link,
-    Button,
 } from "@heroui/react"
 
 export const AcmeLogo = () => {
@@ -30,23 +29,27 @@ export const AcmeLogo = () => {
 
 export default function Navbar() {
 
+    // initialize state for menu open/close
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const menuItems = [
-        "Profile",
-        "Dashboard",
-        "Activity",
-        "Analytics",
-        "System",
-        "Deployments",
-        "My Settings",
-        "Team Settings",
-        "Help & Feedback",
-        "Log Out",
+        {
+            title: "Home",
+            path: "/",
+        },
+        {
+            title: "Quiz",
+            path: "/quiz",
+        },
+        {
+            title: "Scoreboard",
+            path: "/scoreboard",
+        },
+
     ];
 
     return (
-        <Navbars onMenuOpenChange={setIsMenuOpen}>
+        <Navbars onMenuOpenChange={setIsMenuOpen} className='bg-black text-white p-2'>
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -58,45 +61,21 @@ export default function Navbar() {
                 </NavbarBrand>
             </NavbarContent>
 
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Features
-                    </Link>
-                </NavbarItem>
-                <NavbarItem isActive>
-                    <Link aria-current="page" href="#">
-                        Customers
-                    </Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Integrations
-                    </Link>
-                </NavbarItem>
+            <NavbarContent className="hidden sm:flex gap-8" justify="center">
+                {menuItems.map((item, index) => (
+                    <NavbarItem key={index}>
+                        <Link className='text-sm text-white hover:text-gray-300 transition-all duration-200' href={item.path}>
+                            {item.title}
+                        </Link>
+                    </NavbarItem>
+                ))}
             </NavbarContent>
-            <NavbarContent justify="end">
-                <NavbarItem className="hidden lg:flex">
-                    <Link href="#">Login</Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Button as={Link} color="primary" href="#" variant="flat">
-                        Sign Up
-                    </Button>
-                </NavbarItem>
-            </NavbarContent>
+
             <NavbarMenu>
                 {menuItems.map((item, index) => (
-                    <NavbarMenuItem key={`${item}-${index}`}>
-                        <Link
-                            className="w-full"
-                            color={
-                                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-                            }
-                            href="#"
-                            size="lg"
-                        >
-                            {item}
+                    <NavbarMenuItem key={index}>
+                        <Link className="w-full text-sm text-black" href={item.path}>
+                            {item.title}
                         </Link>
                     </NavbarMenuItem>
                 ))}

@@ -4,6 +4,8 @@ import React from 'react'
 
 export default function Footer() {
     return (
-        <div>Footer</div>
+        <footer className='max-w-5xl mx-auto px-6 py-12 flex gap-8'>
+            Footer
+        </footer>
     )
 }
