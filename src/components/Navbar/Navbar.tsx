@@ -72,10 +72,10 @@ export default function Navbar() {
                 ))}
             </NavbarContent>
 
-            <NavbarMenu>
+            <NavbarMenu className='bg-black'>
                 {menuItems.map((item, index) => (
                     <NavbarMenuItem key={index} className='p-4 mt-4'>
-                        <Link className="w-full text-sm text-black" href={item.path}>
+                        <Link className="w-full text-sm text-white" href={item.path}>
                             {item.title}
                         </Link>
                     </NavbarMenuItem>

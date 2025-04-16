@@ -1,7 +1,12 @@
 'use client'
 
 import React from 'react'
-import { FaTwitter, FaLinkedinIn, FaGoogle } from 'react-icons/fa'
+
+// import components from heroui
+import { Link } from '@heroui/react'
+
+// import from react icons
+import { FaInstagram, FaLinkedinIn, FaGithub } from 'react-icons/fa'
 
 export default function Footer() {
     return (
@@ -28,10 +33,10 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="text-white font-semibold italic mb-2">Lorem</h4>
+                        <h4 className="text-white font-semibold italic mb-2">MachineLogic.</h4>
                         <p className="text-sm">
-                            Commodo augue cras facilisis viverra ut egestas mauris tellus viverra.
-                            Nam sed risus ornare lacinia eu.
+                            Game mini yang dirancang untuk membuat belajar logika Boolean jadi menyenangkan dan mudah dipahami.
+                            Cocok buat pelajar, pemimpi, dan pecinta logika di mana pun berada.
                         </p>
                     </div>
                 </div>
@@ -44,9 +49,15 @@ export default function Footer() {
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
                 <p>&copy;  MachineLogic. All Rights Reserved.</p>
                 <div className="flex gap-4 text-white text-lg">
-                    <FaTwitter className="hover:text-gray-400 cursor-pointer" />
-                    <FaLinkedinIn className="hover:text-gray-400 cursor-pointer" />
-                    <FaGoogle className="hover:text-gray-400 cursor-pointer" />
+                    <Link target='_blank' href='https://www.instagram.com/_snchie._/' className='text-white'>
+                        <FaInstagram className="hover:text-gray-400" />
+                    </Link>
+                    <Link target='_blank' href='https://www.linkedin.com/in/sndysptra/' className='text-white'>
+                        <FaLinkedinIn className="hover:text-gray-400" />
+                    </Link>
+                    <Link target='_blank' href='https://github.com/sandysptra09' className='text-white'>
+                        <FaGithub className="hover:text-gray-400" />
+                    </Link>
                 </div>
             </div>
         </footer>
