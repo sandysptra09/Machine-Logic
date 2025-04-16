@@ -34,15 +34,15 @@ export default function Navbar() {
 
     const menuItems = [
         {
-            title: "Home",
+            title: "Beranda",
             path: "/",
         },
         {
-            title: "Quiz",
+            title: "Kuis",
             path: "/quiz",
         },
         {
-            title: "Scoreboard",
+            title: "Papan Skor",
             path: "/scoreboard",
         },
 
@@ -56,8 +56,9 @@ export default function Navbar() {
                     className="sm:hidden"
                 />
                 <NavbarBrand>
-                    <AcmeLogo />
-                    <p className="font-bold text-inherit">ACME</p>
+                    <h2 className="text-white font-semibold">
+                        <span className="font-normal">Machine</span>Logic.
+                    </h2>
                 </NavbarBrand>
             </NavbarContent>
 
@@ -73,7 +74,7 @@ export default function Navbar() {
 
             <NavbarMenu>
                 {menuItems.map((item, index) => (
-                    <NavbarMenuItem key={index}>
+                    <NavbarMenuItem key={index} className='p-4 mt-4'>
                         <Link className="w-full text-sm text-black" href={item.path}>
                             {item.title}
                         </Link>
