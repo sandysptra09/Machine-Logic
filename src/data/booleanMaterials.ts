@@ -7,10 +7,11 @@ export const booleanMaterials = [
         "Variabel Boolean hanya memiliki dua nilai: True (1) dan False (0).",
   
       title_2: "Operator Logika Dasar",
-      content_2:
-        "AND (∧): Hasilnya True hanya jika kedua operand True.\n" +
-        "OR (∨): Hasilnya True jika setidaknya satu operand True.\n" +
-        "NOT (¬): Mengubah nilai operand; True menjadi False, dan sebaliknya.",
+      content_2: [
+        "AND (∧) : Hasilnya True hanya jika kedua operand True.",
+        "OR (∨)  : Hasilnya True jika setidaknya satu operand True.",
+        "NOT (¬) : Mengubah nilai operand; True menjadi False, dan sebaliknya."
+      ],
   
       title_3: "Tabel Kebenaran (contoh AND)",
       content_3:

@@ -5,6 +5,9 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 
 export default function TruthTable() {
 
+    // helper to create boolean values
+    const capitalizeBool = (value: boolean) => value ? 'True' : 'False';
+
     // define classNames for table
     const classNames = useMemo(
         () => ({
@@ -57,7 +60,7 @@ export default function TruthTable() {
             <p className='text-sm text-white/90 whitespace-pre-line mb-4'>
                 Sekarang jika kita nyatakan operasi di atas dalam tabel kebenaran, maka dapat diperoleh peroleh:
             </p>
-            <Table aria-label="Example static collection table" classNames={classNames}>
+            <Table aria-label="Tabel Kebenaran AND dan OR" classNames={classNames}>
                 <TableHeader>
                     <TableColumn>A</TableColumn>
                     <TableColumn>B</TableColumn>
@@ -76,19 +79,19 @@ export default function TruthTable() {
                 </TableBody>
             </Table>
 
-            <Table aria-label="Example static collection table" classNames={classNames}>
+            <Table aria-label="Tabel Kebenaran NOT" classNames={classNames}>
                 <TableHeader>
                     <TableColumn>A</TableColumn>
                     <TableColumn>¬A</TableColumn>
                 </TableHeader>
                 <TableBody>
                     <TableRow key="1">
-                        <TableCell>True</TableCell>
-                        <TableCell>False</TableCell>
+                        <TableCell>{capitalizeBool(true)}</TableCell>
+                        <TableCell>{capitalizeBool(!true)}</TableCell>
                     </TableRow>
                     <TableRow key="2">
-                        <TableCell>False</TableCell>
-                        <TableCell>True</TableCell>
+                        <TableCell>{capitalizeBool(false)}</TableCell>
+                        <TableCell>{capitalizeBool(!false)}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

@@ -28,14 +28,15 @@ export default function Homepage() {
                     )}
 
                     {item.title_2 && (
-                        <h3 className="text-lg font-semibold text-white">
-                            {item.title_2}
-                        </h3>
+                        <h3 className="text-lg font-semibold text-white">{item.title_2}</h3>
                     )}
-                    {item.content_2 && (
-                        <p className="text-sm text-white/90 whitespace-pre-line">
-                            {item.content_2}
-                        </p>
+
+                    {item.content_2 && Array.isArray(item.content_2) && (
+                        <ul className="list-disc list-inside text-sm text-white/90 mt-2 space-y-1">
+                            {item.content_2.map((point, index) => (
+                                <li key={index}>{point}</li>
+                            ))}
+                        </ul>
                     )}
 
                     {item.title_2 === 'Operator Logika Dasar' && <TruthTable />}
