@@ -30,6 +30,9 @@ export default function SlotMachine() {
     // initialize states for final symbols
     const [finalSymbols, setFinalSymbols] = useState<string[]>(['', '', '']);
 
+    // initialize states for has guessed
+    const [hasGuessed, setHasGuessed] = useState(false);
+
 
     const startTimer = () => {
         setTime(0);
@@ -61,6 +64,7 @@ export default function SlotMachine() {
         setResults(['', '', '']);
         setReelTriggers([true, false, false]);
         setAnswerResult(null);
+        setHasGuessed(false);
         startTimer();
 
         setTimeout(() => setReelTriggers([true, true, false]), 600);
@@ -108,6 +112,9 @@ export default function SlotMachine() {
 
     // handle guess function
     const handleGuess = (guess: boolean) => {
+        if (hasGuessed) return;
+        setHasGuessed(true);
+
         const correct = evaluateLogic();
         const isCorrect = guess === correct;
 
@@ -167,13 +174,15 @@ export default function SlotMachine() {
                     <div className="flex gap-4 justify-center mb-4">
                         <button
                             onClick={() => handleGuess(true)}
-                            className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded text-black font-bold hover:bg-green-400"
+                            disabled={hasGuessed}
+                            className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded text-black font-bold hover:bg-green-400 disabled:opacity-50"
                         >
                             ✅ True
                         </button>
                         <button
                             onClick={() => handleGuess(false)}
-                            className="flex items-center gap-2 bg-red-500 px-4 py-2 rounded text-black font-bold hover:bg-red-400"
+                            disabled={hasGuessed}
+                            className="flex items-center gap-2 bg-red-500 px-4 py-2 rounded text-black font-bold hover:bg-red-400 disabled:opacity-50"
                         >
                             ❌ False
                         </button>
