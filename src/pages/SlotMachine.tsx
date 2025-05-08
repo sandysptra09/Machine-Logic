@@ -2,7 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Reel from '@/components/Reel/Reel';
 
-const FIRST_AND_THIRD_REEL = ['true', 'false'];
+const TRUE_EMOJI = '✅';
+const FALSE_EMOJI = '❌';
+
+const FIRST_AND_THIRD_REEL = [TRUE_EMOJI, FALSE_EMOJI];
 const SECOND_REEL = ['AND', 'OR', 'NOT'];
 
 export default function SlotMachine() {
@@ -38,7 +41,7 @@ export default function SlotMachine() {
             FIRST_AND_THIRD_REEL[Math.floor(Math.random() * FIRST_AND_THIRD_REEL.length)],
         ];
 
-        setFinalSymbols(randoms); // simpan hasil
+        setFinalSymbols(randoms);
         setSpinning(true);
         setResults(['', '', '']);
         setReelTriggers([true, false, false]);
@@ -49,10 +52,9 @@ export default function SlotMachine() {
         setTimeout(() => setReelTriggers([true, true, true]), 1200);
         setTimeout(() => {
             setSpinning(false);
-            setResults(randoms); // setelah semua animasi, set hasil
+            setResults(randoms);
         }, 2000);
     };
-
 
     const handleStop = (symbol: string, index: number) => {
         setResults(prev => {
@@ -64,10 +66,14 @@ export default function SlotMachine() {
 
     const isReadyToGuess = results.every(Boolean) && !spinning;
 
+    const emojiToBool = (emoji: string): boolean => {
+        return emoji === TRUE_EMOJI;
+    };
+
     const evaluateLogic = (): boolean => {
-        const val1 = results[0] === 'true';
+        const val1 = emojiToBool(results[0]);
         const op = results[1];
-        const val2 = results[2] === 'true';
+        const val2 = emojiToBool(results[2]);
 
         switch (op) {
             case 'AND':
@@ -126,7 +132,6 @@ export default function SlotMachine() {
                         spinning={reelTriggers[2]}
                         resultSymbol={finalSymbols[2]}
                     />
-
                 </div>
 
                 {/* Spin Button */}
