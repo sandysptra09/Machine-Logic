@@ -7,13 +7,17 @@ import Reel from '@/components/Reel/Reel';
 // import utils
 import { playSound } from '@/utils/soundPlayer';
 
+// set constants for emojis and symbols
 const TRUE_EMOJI = '✅';
 const FALSE_EMOJI = '❌';
 
+// set constants for reels
 const FIRST_AND_THIRD_REEL = [TRUE_EMOJI, FALSE_EMOJI];
-const SECOND_REEL = ['AND', 'OR', 'NOT'];
+const SECOND_REEL = ['∧', '∨', '¬'];
 
 export default function SlotMachine() {
+
+    // initialize states for spinning, results, reel triggers, answer result, score, high score, and time
     const [spinning, setSpinning] = useState(false);
     const [results, setResults] = useState<string[]>(['', '', '']);
     const [reelTriggers, setReelTriggers] = useState([false, false, false]);
@@ -23,7 +27,9 @@ export default function SlotMachine() {
     const [time, setTime] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+    // initialize states for final symbols
     const [finalSymbols, setFinalSymbols] = useState<string[]>(['', '', '']);
+
 
     const startTimer = () => {
         setTime(0);
@@ -33,10 +39,12 @@ export default function SlotMachine() {
         }, 1000);
     };
 
+    // stop timer function
     const stopTimer = () => {
         if (timerRef.current) clearInterval(timerRef.current);
     };
 
+    // handle spin function
     const handleSpin = () => {
         if (spinning) return;
 
@@ -63,6 +71,7 @@ export default function SlotMachine() {
         }, 2000);
     };
 
+    // handle stop function
     const handleStop = (symbol: string, index: number) => {
         setResults(prev => {
             const updated = [...prev];
@@ -71,29 +80,33 @@ export default function SlotMachine() {
         });
     };
 
+    // check if all reels are ready to guess
     const isReadyToGuess = results.every(Boolean) && !spinning;
 
+    // check if all reels are spinning
     const emojiToBool = (emoji: string): boolean => {
         return emoji === TRUE_EMOJI;
     };
 
+    // evaluate logic function
     const evaluateLogic = (): boolean => {
         const val1 = emojiToBool(results[0]);
         const op = results[1];
         const val2 = emojiToBool(results[2]);
 
         switch (op) {
-            case 'AND':
+            case '∧':
                 return val1 && val2;
-            case 'OR':
+            case '∨':
                 return val1 || val2;
-            case 'NOT':
+            case '¬':
                 return !val1;
             default:
                 return false;
         }
     };
 
+    // handle guess function
     const handleGuess = (guess: boolean) => {
         const correct = evaluateLogic();
         const isCorrect = guess === correct;
@@ -124,7 +137,6 @@ export default function SlotMachine() {
             <div className="w-full max-w-md p-6 bg-zinc-900 rounded-lg border-4 border-yellow-500">
                 <h1 className="text-3xl font-bold mb-4 text-center">🎰 MachineLogic Quiz</h1>
 
-                {/* Reels */}
                 <div className="flex justify-center gap-4 mb-6">
                     <Reel
                         symbols={FIRST_AND_THIRD_REEL}
@@ -143,7 +155,6 @@ export default function SlotMachine() {
                     />
                 </div>
 
-                {/* Spin Button */}
                 <button
                     onClick={handleSpin}
                     disabled={spinning}
@@ -152,7 +163,6 @@ export default function SlotMachine() {
                     🎲 SPIN
                 </button>
 
-                {/* Logic Guess */}
                 {isReadyToGuess && (
                     <div className="flex gap-4 justify-center mb-4">
                         <button
@@ -170,14 +180,12 @@ export default function SlotMachine() {
                     </div>
                 )}
 
-                {/* Feedback */}
                 {answerResult && (
                     <div className="text-xl text-center font-semibold mt-2">
                         {answerResult}
                     </div>
                 )}
 
-                {/* Footer Info */}
                 <div className="flex justify-between text-sm text-gray-400 mt-6">
                     <span>Skor: {score}</span>
                     <span>High Score: {highScore}</span>

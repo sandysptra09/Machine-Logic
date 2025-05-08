@@ -1,5 +1,6 @@
 let sounds: { [key: string]: HTMLAudioElement } = {};
 
+// check if the code is running in a browser environment before creating audio objects
 if (typeof window !== "undefined") {
   sounds = {
     spin: new Audio('/assets/sounds/wheel.wav'),
@@ -8,6 +9,7 @@ if (typeof window !== "undefined") {
   };
 }
 
+// function to play sound based on the key provided
 export const playSound = (key: 'spin' | 'win' | 'lose') => {
   if (typeof window === "undefined") return; // Pastikan kode hanya dijalankan di browser
   const sound = sounds[key];

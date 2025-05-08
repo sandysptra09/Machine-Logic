@@ -9,14 +9,18 @@ interface ReelProps {
 }
 
 const Reel = ({ symbols, spinning, resultSymbol }: ReelProps) => {
+
+    // initialize animation controls and mounted state
     const controls = useAnimation();
     const [isMounted, setIsMounted] = useState(false);
 
+    // set mounted state to true when component is mounted
     useEffect(() => {
         setIsMounted(true);
         return () => setIsMounted(false);
     }, []);
 
+    // set animation for the reel
     useEffect(() => {
         if (!isMounted || !resultSymbol) return;
 
@@ -25,7 +29,7 @@ const Reel = ({ symbols, spinning, resultSymbol }: ReelProps) => {
                 y: [-5, -1000],
                 transition: { duration: 1.5, ease: "easeOut" }
             }).then(() => {
-                controls.set({ y: -5 }); // reset posisinya
+                controls.set({ y: -5 });
             });
         }
     }, [spinning, isMounted, resultSymbol]);
