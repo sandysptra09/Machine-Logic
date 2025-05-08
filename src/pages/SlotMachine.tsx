@@ -1,106 +1,108 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Reel from '@/components/Reel/Reel';
-import { playSound } from '@/utils/sounds';
 
-const OPERANDS = [true, false];
-const OPERATORS = ['AND', 'OR', 'NOT'] as const;
-type Operator = typeof OPERATORS[number];
-
-const SYMBOLS_MAP = {
-    true: '✅', false: '❌',
-    AND: '＆', OR: '｜', NOT: '¬'
-};
-
-const evaluateLogic = (op1: boolean, operator: Operator, op2?: boolean) => {
-    switch (operator) {
-        case 'AND': return op1 && op2!;
-        case 'OR': return op1 || op2!;
-        case 'NOT': return !op1; // Abaikan op2
-        default: return false;
-    }
-};
+const FIRST_AND_THIRD_REEL = ['true', 'false'];
+const SECOND_REEL = ['AND', 'OR', 'NOT'];
 
 export default function SlotMachine() {
-    // Game State
-    const [operand1, setOperand1] = useState<boolean>(true);
-    const [operand2, setOperand2] = useState<boolean>(false);
-    const [operator, setOperator] = useState<Operator>('AND');
-    const [result, setResult] = useState<boolean | null>(null);
-    const [feedback, setFeedback] = useState('');
+    const [spinning, setSpinning] = useState(false);
+    const [results, setResults] = useState<string[]>(['', '', '']);
+    const [reelTriggers, setReelTriggers] = useState([false, false, false]);
+    const [answerResult, setAnswerResult] = useState<string | null>(null);
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
-    const [timeLeft, setTimeLeft] = useState(30);
-    const [spinning, setSpinning] = useState(false);
-    const [explanation, setExplanation] = useState('');
+    const [time, setTime] = useState(0);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    // High Score Effect
-    useEffect(() => {
-        setHighScore(Number(localStorage.getItem('highScore')) || 0);
-    }, []);
+    const [finalSymbols, setFinalSymbols] = useState<string[]>(['', '', '']);
 
-    // Timer Effect
-    useEffect(() => {
-        if (timeLeft > 0 && !spinning) {
-            const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
-            return () => clearTimeout(timer);
-        }
-    }, [timeLeft, spinning]);
-
-    // Updated Spin Function
-    const spin = () => {
-        playSound('spin');
-        setSpinning(true);
-        setFeedback('');
-        setExplanation('');
-
-        setTimeout(() => {
-            const newOperator = OPERATORS[Math.floor(Math.random() * OPERATORS.length)];
-            const newOperand1 = OPERANDS[Math.floor(Math.random() * OPERANDS.length)];
-            const newOperand2 = newOperator !== 'NOT'
-                ? OPERANDS[Math.floor(Math.random() * OPERANDS.length)]
-                : false;
-
-            // Calculate result FIRST
-            const newResult = evaluateLogic(newOperand1, newOperator, newOperand2);
-
-            // Then update all states ATOMICALLY
-            setOperator(newOperator);
-            setOperand1(newOperand1);
-            setOperand2(newOperand2);
-            setResult(newResult); // Use the pre-calculated result
-
-            // Generate explanation immediately
-            const explanationMap = {
-                AND: `${newOperand1} AND ${newOperand2} = ${newResult}`,
-                OR: `${newOperand1} OR ${newOperand2} = ${newResult}`,
-                NOT: `NOT ${newOperand1} = ${newResult}`
-            };
-            setExplanation(explanationMap[newOperator]);
-
-            setSpinning(false);
-        }, 1500);
+    const startTimer = () => {
+        setTime(0);
+        if (timerRef.current) clearInterval(timerRef.current);
+        timerRef.current = setInterval(() => {
+            setTime(prev => prev + 1);
+        }, 1000);
     };
 
-    // Simplified Handle Answer
-    const handleAnswer = (userAnswer: boolean) => {
-        if (result === null) return; // Guard clause
+    const stopTimer = () => {
+        if (timerRef.current) clearInterval(timerRef.current);
+    };
 
-        const isCorrect = userAnswer === result;
-        setFeedback(isCorrect ? '✅ Benar!' : '❌ Salah!');
-        playSound(isCorrect ? 'win' : 'lose');
+    const handleSpin = () => {
+        if (spinning) return;
 
+        const randoms = [
+            FIRST_AND_THIRD_REEL[Math.floor(Math.random() * FIRST_AND_THIRD_REEL.length)],
+            SECOND_REEL[Math.floor(Math.random() * SECOND_REEL.length)],
+            FIRST_AND_THIRD_REEL[Math.floor(Math.random() * FIRST_AND_THIRD_REEL.length)],
+        ];
+
+        setFinalSymbols(randoms); // simpan hasil
+        setSpinning(true);
+        setResults(['', '', '']);
+        setReelTriggers([true, false, false]);
+        setAnswerResult(null);
+        startTimer();
+
+        setTimeout(() => setReelTriggers([true, true, false]), 600);
+        setTimeout(() => setReelTriggers([true, true, true]), 1200);
+        setTimeout(() => {
+            setSpinning(false);
+            setResults(randoms); // setelah semua animasi, set hasil
+        }, 2000);
+    };
+
+
+    const handleStop = (symbol: string, index: number) => {
+        setResults(prev => {
+            const updated = [...prev];
+            updated[index] = symbol;
+            return updated;
+        });
+    };
+
+    const isReadyToGuess = results.every(Boolean) && !spinning;
+
+    const evaluateLogic = (): boolean => {
+        const val1 = results[0] === 'true';
+        const op = results[1];
+        const val2 = results[2] === 'true';
+
+        switch (op) {
+            case 'AND':
+                return val1 && val2;
+            case 'OR':
+                return val1 || val2;
+            case 'NOT':
+                return !val1;
+            default:
+                return false;
+        }
+    };
+
+    const handleGuess = (guess: boolean) => {
+        const correct = evaluateLogic();
+        const isCorrect = guess === correct;
+
+        setAnswerResult(isCorrect ? '✅ Benar!' : '❌ Salah!');
         if (isCorrect) {
             setScore(prev => {
                 const newScore = prev + 1;
-                if (newScore > highScore) {
-                    localStorage.setItem('highScore', String(newScore));
-                    setHighScore(newScore);
-                }
+                if (newScore > highScore) setHighScore(newScore);
                 return newScore;
             });
+        } else {
+            setScore(0);
+            stopTimer();
         }
     };
+
+    useEffect(() => {
+        return () => {
+            stopTimer();
+        };
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex flex-col items-center justify-center">
@@ -109,75 +111,63 @@ export default function SlotMachine() {
 
                 {/* Reels */}
                 <div className="flex justify-center gap-4 mb-6">
-                    {/* Reel 1 (Operand 1) */}
                     <Reel
-                        symbols={['✅', '❌']}
-                        spinning={spinning}
-                        onStop={(symbol) => setOperand1(symbol === '✅')}
+                        symbols={FIRST_AND_THIRD_REEL}
+                        spinning={reelTriggers[0]}
+                        resultSymbol={finalSymbols[0]}
+                    />
+                    <Reel
+                        symbols={SECOND_REEL}
+                        spinning={reelTriggers[1]}
+                        resultSymbol={finalSymbols[1]}
+                    />
+                    <Reel
+                        symbols={FIRST_AND_THIRD_REEL}
+                        spinning={reelTriggers[2]}
+                        resultSymbol={finalSymbols[2]}
                     />
 
-                    {/* Reel 2 (Operator) */}
-                    <Reel
-                        symbols={['＆', '｜', '¬']}
-                        spinning={spinning}
-                        onStop={(symbol) => {
-                            const opMap: Record<string, Operator> = { '＆': 'AND', '｜': 'OR', '¬': 'NOT' };
-                            setOperator(opMap[symbol]);
-                        }}
-                    />
-
-                    {/* Reel 3 (Operand 2) - Always visible */}
-                    <Reel
-                        symbols={operator !== 'NOT' ? ['✅', '❌'] : ['⬜']} // Netral kalau NOT
-                        spinning={spinning}
-                        onStop={(symbol) => {
-                            if (operator !== 'NOT') setOperand2(symbol === '✅');
-                        }}
-                    />
                 </div>
 
-                {/* Controls */}
+                {/* Spin Button */}
                 <button
-                    onClick={spin}
-                    disabled={spinning || timeLeft <= 0}
-                    className="bg-yellow-500 text-black font-bold py-2 px-6 rounded mb-4 w-full hover:bg-yellow-400 disabled:opacity-50"
+                    onClick={handleSpin}
+                    disabled={spinning}
+                    className="w-full px-6 py-2 bg-yellow-600 text-black font-bold rounded hover:bg-yellow-500 disabled:opacity-50 mb-4"
                 >
-                    {spinning ? '⏳ Spinning...' : '🎲 SPIN'}
+                    🎲 SPIN
                 </button>
 
-                {/* Answer Buttons */}
-                <div className="flex gap-4 mb-4">
-                    <button
-                        onClick={() => handleAnswer(true)}
-                        className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded flex-1"
-                    >
-                        ✅ True
-                    </button>
-                    <button
-                        onClick={() => handleAnswer(false)}
-                        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded flex-1"
-                    >
-                        ❌ False
-                    </button>
-                </div>
-
-                {/* Feedback */}
-                {feedback && (
-                    <div className="mb-4">
-                        <p className="text-xl font-bold text-center">{feedback}</p>
-                        {explanation && (
-                            <p className="text-sm text-yellow-300 mt-2 text-center">
-                                Penjelasan: <span className="italic">{explanation}</span>
-                            </p>
-                        )}
+                {/* Logic Guess */}
+                {isReadyToGuess && (
+                    <div className="flex gap-4 justify-center mb-4">
+                        <button
+                            onClick={() => handleGuess(true)}
+                            className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded text-black font-bold hover:bg-green-400"
+                        >
+                            ✅ True
+                        </button>
+                        <button
+                            onClick={() => handleGuess(false)}
+                            className="flex items-center gap-2 bg-red-500 px-4 py-2 rounded text-black font-bold hover:bg-red-400"
+                        >
+                            ❌ False
+                        </button>
                     </div>
                 )}
 
-                {/* Stats */}
-                <div className="flex justify-between text-sm text-gray-400">
+                {/* Feedback */}
+                {answerResult && (
+                    <div className="text-xl text-center font-semibold mt-2">
+                        {answerResult}
+                    </div>
+                )}
+
+                {/* Footer Info */}
+                <div className="flex justify-between text-sm text-gray-400 mt-6">
                     <span>Skor: {score}</span>
                     <span>High Score: {highScore}</span>
-                    <span>Waktu: {timeLeft}s</span>
+                    <span>Waktu: {time}s</span>
                 </div>
             </div>
         </div>
