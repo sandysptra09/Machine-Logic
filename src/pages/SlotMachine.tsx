@@ -1,6 +1,11 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+
+// import components
 import Reel from '@/components/Reel/Reel';
+
+// import utils
+import { playSound } from '@/utils/soundPlayer';
 
 const TRUE_EMOJI = '✅';
 const FALSE_EMOJI = '❌';
@@ -34,6 +39,8 @@ export default function SlotMachine() {
 
     const handleSpin = () => {
         if (spinning) return;
+
+        playSound('spin');
 
         const randoms = [
             FIRST_AND_THIRD_REEL[Math.floor(Math.random() * FIRST_AND_THIRD_REEL.length)],
@@ -93,12 +100,14 @@ export default function SlotMachine() {
 
         setAnswerResult(isCorrect ? '✅ Benar!' : '❌ Salah!');
         if (isCorrect) {
+            playSound('win');
             setScore(prev => {
                 const newScore = prev + 1;
                 if (newScore > highScore) setHighScore(newScore);
                 return newScore;
             });
         } else {
+            playSound('lose');
             setScore(0);
             stopTimer();
         }
