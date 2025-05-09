@@ -27,8 +27,8 @@ export default function Footer() {
                     <div>
                         <ul className="space-y-2">
                             <li>Beranda</li>
-                            <li>Kuis</li>
-                            <li>Papan Score</li>
+                            <li>Slot Machine</li>
+                            <li>Gate Puzzle</li>
                         </ul>
                     </div>
 

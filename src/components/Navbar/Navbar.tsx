@@ -38,12 +38,12 @@ export default function Navbar() {
             path: "/",
         },
         {
-            title: "Kuis",
-            path: "/quiz",
+            title: "Slot Machine",
+            path: "/slot-machine",
         },
         {
-            title: "Papan Skor",
-            path: "/scoreboard",
+            title: "Gate Puzzle",
+            path: "/gate-puzzle",
         },
 
     ];
