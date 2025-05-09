@@ -12,14 +12,14 @@ export default function GatePuzzle() {
 
     const [isDoorOpen, setIsDoorOpen] = useState(false);
 
-    // Evaluasi boolean expression
+    // check if door is open
     useEffect(() => {
         const { A, B, C, D } = switches;
         const result = (A && B) || (C && !D);
         setIsDoorOpen(result);
     }, [switches]);
 
-    // Handle toggle saklar
+    // handle switch
     const toggleSwitch = (key: keyof typeof switches) => {
         setSwitches(prev => ({
             ...prev,
