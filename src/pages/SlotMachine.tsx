@@ -1,6 +1,9 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 
+// import components from heroui
+import { Button } from '@heroui/react';
+
 // import components
 import Reel from '@/components/Reel/Reel';
 
@@ -17,37 +20,57 @@ const SECOND_REEL = ['∧', '∨', '¬'];
 
 export default function SlotMachine() {
 
-    // initialize states for spinning, results, reel triggers, answer result, score, high score, and time
+    // initialize state 
     const [spinning, setSpinning] = useState(false);
     const [results, setResults] = useState<string[]>(['', '', '']);
     const [reelTriggers, setReelTriggers] = useState([false, false, false]);
     const [answerResult, setAnswerResult] = useState<string | null>(null);
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
-    const [time, setTime] = useState(0);
+    const [time, setTime] = useState(10);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // initialize states for final symbols
     const [finalSymbols, setFinalSymbols] = useState<string[]>(['', '', '']);
-
-    // initialize states for has guessed
     const [hasGuessed, setHasGuessed] = useState(false);
 
+    // get high score in localstorage in first time reload
+    useEffect(() => {
+        const storedHighScore = localStorage.getItem('highScore');
+        if (storedHighScore) {
+            setHighScore(parseInt(storedHighScore, 10));
+        }
+        return () => stopTimer();
+    }, []);
 
+    // 
     const startTimer = () => {
-        setTime(0);
+        setTime(10);
         if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = setInterval(() => {
-            setTime(prev => prev + 1);
+            setTime(prev => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current!);
+                    if (!hasGuessed) handleTimeout();
+                    return 0;
+                }
+                return prev - 1;
+            });
         }, 1000);
     };
 
-    // stop timer function
+    // set stop timmer
     const stopTimer = () => {
         if (timerRef.current) clearInterval(timerRef.current);
     };
 
-    // handle spin function
+    // function handle timeout
+    const handleTimeout = () => {
+        setAnswerResult('⏰ Waktu habis! ❌ Salah!');
+        setScore(0);
+        playSound('lose');
+        setHasGuessed(true);
+    };
+
+    // function handle spin
     const handleSpin = () => {
         if (spinning) return;
 
@@ -75,7 +98,7 @@ export default function SlotMachine() {
         }, 2000);
     };
 
-    // handle stop function
+    // function handle stop
     const handleStop = (symbol: string, index: number) => {
         setResults(prev => {
             const updated = [...prev];
@@ -84,36 +107,31 @@ export default function SlotMachine() {
         });
     };
 
-    // check if all reels are ready to guess
+    // set ready to guess
     const isReadyToGuess = results.every(Boolean) && !spinning;
 
-    // check if all reels are spinning
-    const emojiToBool = (emoji: string): boolean => {
-        return emoji === TRUE_EMOJI;
-    };
+    // set emoji to boolean
+    const emojiToBool = (emoji: string): boolean => emoji === TRUE_EMOJI;
 
-    // evaluate logic function
+    // set logic explanation
     const evaluateLogic = (): boolean => {
         const val1 = emojiToBool(results[0]);
         const op = results[1];
         const val2 = emojiToBool(results[2]);
 
         switch (op) {
-            case '∧':
-                return val1 && val2;
-            case '∨':
-                return val1 || val2;
-            case '¬':
-                return !val1;
-            default:
-                return false;
+            case '∧': return val1 && val2;
+            case '∨': return val1 || val2;
+            case '¬': return !val1;
+            default: return false;
         }
     };
 
-    // handle guess function
+    // function handle guess
     const handleGuess = (guess: boolean) => {
         if (hasGuessed) return;
         setHasGuessed(true);
+        stopTimer();
 
         const correct = evaluateLogic();
         const isCorrect = guess === correct;
@@ -123,69 +141,37 @@ export default function SlotMachine() {
             playSound('win');
             setScore(prev => {
                 const newScore = prev + 1;
-                if (newScore > highScore) setHighScore(newScore);
+                if (newScore > highScore) {
+                    setHighScore(newScore);
+                    localStorage.setItem('highScore', newScore.toString());
+                }
                 return newScore;
             });
         } else {
             playSound('lose');
             setScore(0);
-            stopTimer();
         }
     };
 
-    useEffect(() => {
-        return () => {
-            stopTimer();
-        };
-    }, []);
-
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex flex-col items-center justify-center">
-            <div className="w-full max-w-md p-6 bg-zinc-900 rounded-lg border-4 border-yellow-500">
-                <h1 className="text-3xl font-bold mb-4 text-center">🎰 MachineLogic Quiz</h1>
+        <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
+            <div className="w-full max-w-md p-6 bg-gradient-to-b from-gray-900 to-black rounded-lg border-4 border-yellow-500">
+                <h1 className="text-3xl font-bold mb-4 text-center">🎰 Slot Machine Logic </h1>
 
                 <div className="flex justify-center gap-4 mb-6">
-                    <Reel
-                        symbols={FIRST_AND_THIRD_REEL}
-                        spinning={reelTriggers[0]}
-                        resultSymbol={finalSymbols[0]}
-                    />
-                    <Reel
-                        symbols={SECOND_REEL}
-                        spinning={reelTriggers[1]}
-                        resultSymbol={finalSymbols[1]}
-                    />
-                    <Reel
-                        symbols={FIRST_AND_THIRD_REEL}
-                        spinning={reelTriggers[2]}
-                        resultSymbol={finalSymbols[2]}
-                    />
+                    <Reel symbols={FIRST_AND_THIRD_REEL} spinning={reelTriggers[0]} resultSymbol={finalSymbols[0]} />
+                    <Reel symbols={SECOND_REEL} spinning={reelTriggers[1]} resultSymbol={finalSymbols[1]} />
+                    <Reel symbols={FIRST_AND_THIRD_REEL} spinning={reelTriggers[2]} resultSymbol={finalSymbols[2]} />
                 </div>
 
-                <button
-                    onClick={handleSpin}
-                    disabled={spinning}
-                    className="w-full px-6 py-2 bg-yellow-600 text-black font-bold rounded hover:bg-yellow-500 disabled:opacity-50 mb-4"
-                >
-                    🎲 SPIN
-                </button>
+                <Button onPress={handleSpin} isLoading={spinning} spinnerPlacement='start' color='warning' radius='sm' className='w-full px-6 py-2 text-black font-semibold text-md disabled:opacity-50 mb-4'>
+                    {spinning ? 'Spinning...' : 'Spin'}
+                </Button>
 
                 {isReadyToGuess && (
                     <div className="flex gap-4 justify-center mb-4">
-                        <button
-                            onClick={() => handleGuess(true)}
-                            disabled={hasGuessed}
-                            className="flex items-center gap-2 bg-green-500 px-4 py-2 rounded text-black font-bold hover:bg-green-400 disabled:opacity-50"
-                        >
-                            ✅ True
-                        </button>
-                        <button
-                            onClick={() => handleGuess(false)}
-                            disabled={hasGuessed}
-                            className="flex items-center gap-2 bg-red-500 px-4 py-2 rounded text-black font-bold hover:bg-red-400 disabled:opacity-50"
-                        >
-                            ❌ False
-                        </button>
+                        <Button color='success' radius='sm' onPress={() => handleGuess(true)} disabled={hasGuessed} className='flex items-center gap-2 px-4 text-white font-semibold text-md disabled:opacity-50'>✅ True</Button>
+                        <Button radius='sm' onPress={() => handleGuess(false)} disabled={hasGuessed} className='flex items-center gap-2 bg-red-500 px-4 py-2 text-white font-semibold text-md disabled:opacity-50'>❌ False</Button>
                     </div>
                 )}
 
