@@ -31,6 +31,9 @@ export default function GatePuzzle() {
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+    // initialize state for timeout
+    const [showTimeoutMessage, setShowTimeoutMessage] = useState(false);
+
     // start countdown
     useEffect(() => {
         if (countdownActive && !hasGuessed) {
@@ -39,8 +42,11 @@ export default function GatePuzzle() {
                     if (prev === 1) {
                         clearInterval(timerRef.current!);
                         setCountdownActive(false);
-                        setShowError(true);
-                        setTimeout(() => resetGame(), 2000);
+                        setShowTimeoutMessage(true);
+                        setTimeout(() => {
+                            setShowTimeoutMessage(false);
+                            resetGame();
+                        }, 2000);
                         return 0;
                     }
                     return prev - 1;
@@ -169,20 +175,25 @@ export default function GatePuzzle() {
             )}
 
             <AnimatePresence>
-                {hasGuessed && (
+                {(hasGuessed || showTimeoutMessage) && (
                     <motion.div
-                        className={`text-2xl font-bold px-6 py-3 rounded-lg mt-2`}
-                        key="result"
+                        className={`text-2xl font-bold px-6 py-3 rounded-lg mt-2 ${showTimeoutMessage
+                            ? 'bg-red-600'
+                            : isDoorOpen
+                                ? 'bg-green-600'
+                                : 'bg-red-600'
+                            }`}
+                        key={showTimeoutMessage ? 'timeout' : 'result'}
                         initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{
-                            scale: 1,
-                            opacity: 1,
-                            backgroundColor: isDoorOpen ? '#16a34a' : '#dc2626',
-                        }}
+                        animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.8, opacity: 0 }}
                         transition={{ duration: 0.4 }}
                     >
-                        {isDoorOpen ? '🚪 Pintu Terbuka!' : '❌ Salah! Mengulang dari awal...'}
+                        {showTimeoutMessage
+                            ? '⏰ Waktu habis! Mengulang dari awal...'
+                            : isDoorOpen
+                                ? '🚪 Pintu Terbuka!'
+                                : '❌ Salah! Mengulang dari awal...'}
                     </motion.div>
                 )}
             </AnimatePresence>
