@@ -51,15 +51,22 @@ export default function GatePuzzle() {
     });
     const [isDoorOpen, setIsDoorOpen] = useState(false);
     const [hasGuessed, setHasGuessed] = useState(false);
+    const [showError, setShowError] = useState(false);
 
     // evaluate expression when switches or currentLevel changes
     useEffect(() => {
         if (hasGuessed) {
-            const level = levels[currentLevel];
-            const result = level.expression(switches);
+            const result = levels[currentLevel].expression(switches);
             setIsDoorOpen(result);
+
+            if (!result) {
+                setShowError(true);
+                setTimeout(() => {
+                    resetGame();
+                }, 2000); // kasih waktu 2 detik untuk lihat hasil sebelum reset
+            }
         }
-    }, [switches, currentLevel, hasGuessed]);
+    }, [hasGuessed]);
 
     // handle switch toggle
     const toggleSwitch = (key: keyof SwitchState) => {
@@ -79,14 +86,26 @@ export default function GatePuzzle() {
     const goToNextLevel = () => {
         if (currentLevel < levels.length - 1) {
             setCurrentLevel(prev => prev + 1);
-            setSwitches({ A: false, B: false, C: false, D: false });
-            setIsDoorOpen(false);
-            setHasGuessed(false);
+            resetLevel();
         }
     };
 
+    // reset level
+    const resetLevel = () => {
+        setSwitches({ A: false, B: false, C: false, D: false });
+        setIsDoorOpen(false);
+        setHasGuessed(false);
+        setShowError(false);
+    };
+
+    // reset game
+    const resetGame = () => {
+        setCurrentLevel(0);
+        resetLevel();
+    };
+
     return (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center px-4">
+        <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
             <h1 className="text-3xl font-bold mb-6 text-yellow-400">
                 🔐 Pintu Terkunci - Level {currentLevel + 1}
             </h1>
@@ -119,10 +138,10 @@ export default function GatePuzzle() {
 
             {hasGuessed && (
                 <div
-                    className={`text-2xl font-bold px-6 py-3 rounded-lg transition-colors duration-500 ${isDoorOpen ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                    className={`text-2xl font-bold px-6 py-3 rounded-lg transition-colors duration-500 ${isDoorOpen ? 'bg-green-600' : 'bg-red-600'
                         }`}
                 >
-                    {isDoorOpen ? '🚪 Pintu Terbuka!' : '🔒 Pintu Terkunci'}
+                    {isDoorOpen ? '🚪 Pintu Terbuka!' : '❌ Salah! Mengulang dari awal...'}
                 </div>
             )}
 
