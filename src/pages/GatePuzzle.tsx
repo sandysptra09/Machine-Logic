@@ -1,47 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // import components from heroui
-import { Button } from '@heroui/react';
+import { Button, Progress } from '@heroui/react';
 
-
-type SwitchState = {
-    A: boolean;
-    B: boolean;
-    C: boolean;
-    D: boolean;
-};
-
-type Level = {
-    id: number;
-    expression: (s: SwitchState) => boolean;
-    description: string;
-};
-
-const levels: Level[] = [
-    {
-        id: 1,
-        expression: ({ A, B }) => A && B,
-        description: '(A AND B) = true',
-    },
-    {
-        id: 2,
-        expression: ({ C, D }) => C && !D,
-        description: '(C AND NOT D) = true',
-    },
-    {
-        id: 3,
-        expression: ({ A, B, C, D }) => (A && B) || (C && !D),
-        description: '(A AND B) OR (C AND NOT D) = true',
-    },
-    {
-        id: 4,
-        expression: ({ A, B, C }) => (A || B) && !C,
-        description: '(A OR B) AND NOT C = true',
-    },
-];
+// import utils
+import { levels, SwitchState } from '@/utils/levels';
 
 export default function GatePuzzle() {
 
@@ -52,22 +18,49 @@ export default function GatePuzzle() {
         B: false,
         C: false,
         D: false,
+        E: false,
+        F: false,
     });
     const [isDoorOpen, setIsDoorOpen] = useState(false);
     const [hasGuessed, setHasGuessed] = useState(false);
     const [showError, setShowError] = useState(false);
 
+    // initialize state for countdown
+    const [timeLeft, setTimeLeft] = useState(15);
+    const [countdownActive, setCountdownActive] = useState(true);
+
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // start countdown
+    useEffect(() => {
+        if (countdownActive && !hasGuessed) {
+            timerRef.current = setInterval(() => {
+                setTimeLeft(prev => {
+                    if (prev === 1) {
+                        clearInterval(timerRef.current!);
+                        setCountdownActive(false);
+                        setShowError(true);
+                        setTimeout(() => resetGame(), 2000);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+
+        return () => clearInterval(timerRef.current!);
+    }, [countdownActive, hasGuessed]);
+
     // evaluate expression when switches or currentLevel changes
     useEffect(() => {
         if (hasGuessed) {
+            clearInterval(timerRef.current!);
             const result = levels[currentLevel].expression(switches);
             setIsDoorOpen(result);
 
             if (!result) {
                 setShowError(true);
-                setTimeout(() => {
-                    resetGame();
-                }, 2000);
+                setTimeout(() => resetGame(), 2000);
             }
         }
     }, [hasGuessed]);
@@ -84,7 +77,9 @@ export default function GatePuzzle() {
     // handle guess
     const handleGuess = () => {
         setHasGuessed(true);
+        setCountdownActive(false);
     };
+
 
     // handle next level
     const goToNextLevel = () => {
@@ -96,11 +91,14 @@ export default function GatePuzzle() {
 
     // reset level
     const resetLevel = () => {
-        setSwitches({ A: false, B: false, C: false, D: false });
+        setSwitches({ A: false, B: false, C: false, D: false, E: false, F: false });
         setIsDoorOpen(false);
         setHasGuessed(false);
         setShowError(false);
+        setTimeLeft(15);
+        setCountdownActive(true);
     };
+
 
     // reset game
     const resetGame = () => {
@@ -111,13 +109,20 @@ export default function GatePuzzle() {
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
             <motion.h1
-                className="text-3xl font-bold mb-6 text-yellow-400"
+                className="text-3xl font-bold mb-4 text-yellow-400"
                 initial={{ y: -30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
             >
                 🔐 Pintu Terkunci - Level {currentLevel + 1}
             </motion.h1>
+
+            <div className="w-full max-w-md mb-4">
+                <Progress value={(timeLeft / 15) * 100} color="danger" />
+                <p className="text-sm text-center mt-1 text-gray-400">
+                    Sisa waktu: {timeLeft} detik
+                </p>
+            </div>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
                 {Object.entries(switches).map(([key, value]) => (
