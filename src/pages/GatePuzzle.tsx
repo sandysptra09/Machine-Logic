@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// import components from heroui
 import { Button } from '@heroui/react';
+
 
 type SwitchState = {
     A: boolean;
@@ -63,7 +67,7 @@ export default function GatePuzzle() {
                 setShowError(true);
                 setTimeout(() => {
                     resetGame();
-                }, 2000); // kasih waktu 2 detik untuk lihat hasil sebelum reset
+                }, 2000);
             }
         }
     }, [hasGuessed]);
@@ -106,64 +110,93 @@ export default function GatePuzzle() {
 
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
-            <h1 className="text-3xl font-bold mb-6 text-yellow-400">
+            <motion.h1
+                className="text-3xl font-bold mb-6 text-yellow-400"
+                initial={{ y: -30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6 }}
+            >
                 🔐 Pintu Terkunci - Level {currentLevel + 1}
-            </h1>
+            </motion.h1>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
                 {Object.entries(switches).map(([key, value]) => (
-                    <Button
-                        key={key}
-                        onPress={() => toggleSwitch(key as keyof SwitchState)}
-                        variant="solid"
-                        color={value ? 'success' : 'danger'}
-                        disabled={hasGuessed}
-                        className="w-32"
-                    >
-                        Switch {key}: {value ? 'ON' : 'OFF'}
-                    </Button>
+                    <motion.div key={key} whileTap={{ scale: 0.9 }}>
+                        <Button
+                            onPress={() => toggleSwitch(key as keyof SwitchState)}
+                            variant="solid"
+                            color={value ? 'success' : 'danger'}
+                            disabled={hasGuessed}
+                            className="w-32"
+                        >
+                            Switch {key}: {value ? 'ON' : 'OFF'}
+                        </Button>
+                    </motion.div>
                 ))}
             </div>
 
             {!hasGuessed && (
-                <Button
-                    onPress={handleGuess}
-                    variant="solid"
-                    color="primary"
-                    className="mb-6"
-                >
-                    🔍 Cek Jawaban
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }}>
+                    <Button
+                        onPress={handleGuess}
+                        variant="solid"
+                        color="primary"
+                        className="mb-6"
+                    >
+                        🔍 Cek Jawaban
+                    </Button>
+                </motion.div>
             )}
 
-            {hasGuessed && (
-                <div
-                    className={`text-2xl font-bold px-6 py-3 rounded-lg transition-colors duration-500 ${isDoorOpen ? 'bg-green-600' : 'bg-red-600'
-                        }`}
-                >
-                    {isDoorOpen ? '🚪 Pintu Terbuka!' : '❌ Salah! Mengulang dari awal...'}
-                </div>
-            )}
+            <AnimatePresence>
+                {hasGuessed && (
+                    <motion.div
+                        className={`text-2xl font-bold px-6 py-3 rounded-lg mt-2`}
+                        key="result"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{
+                            scale: 1,
+                            opacity: 1,
+                            backgroundColor: isDoorOpen ? '#16a34a' : '#dc2626',
+                        }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        {isDoorOpen ? '🚪 Pintu Terbuka!' : '❌ Salah! Mengulang dari awal...'}
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            <p className="mt-6 text-sm text-gray-400 text-center max-w-xs">
+            <motion.p
+                className="mt-6 text-sm text-gray-400 text-center max-w-xs"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+            >
                 Buka pintu jika: <code>{levels[currentLevel].description}</code>
-            </p>
+            </motion.p>
 
             {hasGuessed && isDoorOpen && currentLevel < levels.length - 1 && (
-                <Button
-                    onPress={goToNextLevel}
-                    variant="solid"
-                    color="primary"
-                    className="mt-6"
-                >
-                    ➡️ Lanjut ke Level {currentLevel + 2}
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }}>
+                    <Button
+                        onPress={goToNextLevel}
+                        variant="solid"
+                        color="primary"
+                        className="mt-6"
+                    >
+                        ➡️ Lanjut ke Level {currentLevel + 2}
+                    </Button>
+                </motion.div>
             )}
 
             {hasGuessed && isDoorOpen && currentLevel === levels.length - 1 && (
-                <p className="mt-6 text-green-400 font-semibold text-xl">
+                <motion.p
+                    className="mt-6 text-green-400 font-semibold text-xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                >
                     🎉 Kamu sudah menyelesaikan semua level!
-                </p>
+                </motion.p>
             )}
         </div>
     );
