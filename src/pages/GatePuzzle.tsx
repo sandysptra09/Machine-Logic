@@ -40,6 +40,8 @@ const levels: Level[] = [
 ];
 
 export default function GatePuzzle() {
+
+    // initial state of the puzzle
     const [currentLevel, setCurrentLevel] = useState(0);
     const [switches, setSwitches] = useState<SwitchState>({
         A: false,
@@ -50,7 +52,7 @@ export default function GatePuzzle() {
     const [isDoorOpen, setIsDoorOpen] = useState(false);
     const [hasGuessed, setHasGuessed] = useState(false);
 
-    // Evaluasi ekspresi boolean berdasarkan level
+    // evaluate expression when switches or currentLevel changes
     useEffect(() => {
         if (hasGuessed) {
             const level = levels[currentLevel];
@@ -59,7 +61,7 @@ export default function GatePuzzle() {
         }
     }, [switches, currentLevel, hasGuessed]);
 
-    // Toggle switch (disabled setelah menebak)
+    // handle switch toggle
     const toggleSwitch = (key: keyof SwitchState) => {
         if (hasGuessed) return;
         setSwitches(prev => ({
@@ -68,10 +70,12 @@ export default function GatePuzzle() {
         }));
     };
 
+    // handle guess
     const handleGuess = () => {
         setHasGuessed(true);
     };
 
+    // handle next level
     const goToNextLevel = () => {
         if (currentLevel < levels.length - 1) {
             setCurrentLevel(prev => prev + 1);
