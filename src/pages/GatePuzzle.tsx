@@ -121,6 +121,15 @@ export default function GatePuzzle() {
                 🔐 Pintu Terkunci - Level {currentLevel + 1}
             </motion.h1>
 
+            <motion.p
+                className="mt-4 text-sm text-yellow-300 text-center max-w-md mb-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+            >
+                🧠 Narasi: {levels[currentLevel].narration}
+            </motion.p>
+
             <div className="w-full max-w-md mb-4">
                 <motion.div
                     animate={timeLeft <= 5 ? { opacity: [1, 0.3, 1] } : { opacity: 1 }}
