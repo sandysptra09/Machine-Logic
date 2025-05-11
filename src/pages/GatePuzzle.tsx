@@ -123,23 +123,15 @@ export default function GatePuzzle() {
 
             <div className="w-full max-w-md mb-4">
                 <motion.div
-                    animate={{
-                        opacity: timeLeft <= 5 ? [1, 0.4, 1] : 1,
-                    }}
-                    transition={
-                        timeLeft <= 5
-                            ? {
-                                duration: 0.8,
-                                repeat: Infinity,
-                            }
-                            : { duration: 0 }
-                    }
+                    animate={timeLeft <= 5 ? { opacity: [1, 0.3, 1] } : { opacity: 1 }}
+                    transition={timeLeft <= 5 ? { duration: 0.5, repeat: Infinity } : {}}
                 >
                     <Progress
                         value={(timeLeft / 15) * 100}
                         color="danger"
                     />
                 </motion.div>
+
                 <p className={`text-sm text-center mt-1 ${timeLeft <= 5 ? 'text-red-500' : 'text-gray-400'}`}>
                     Sisa waktu: {timeLeft} detik
                 </p>
