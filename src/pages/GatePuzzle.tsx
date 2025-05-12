@@ -11,6 +11,9 @@ import { levels, SwitchState } from '@/utils/levels';
 
 export default function GatePuzzle() {
 
+    // initialize state for intro
+    const [showIntro, setShowIntro] = useState(true);
+
     // initial state of the puzzle
     const [currentLevel, setCurrentLevel] = useState(0);
     const [switches, setSwitches] = useState<SwitchState>({
@@ -27,7 +30,7 @@ export default function GatePuzzle() {
 
     // initialize state for countdown
     const [timeLeft, setTimeLeft] = useState(15);
-    const [countdownActive, setCountdownActive] = useState(true);
+    const [countdownActive, setCountdownActive] = useState(false);
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -110,8 +113,42 @@ export default function GatePuzzle() {
         resetLevel();
     };
 
+    // start game
+    const startGame = () => {
+        setShowIntro(false);
+        setCountdownActive(true);
+    };
+
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4">
+
+            <AnimatePresence>
+                {showIntro && (
+                    <motion.div
+                        className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center px-6"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div
+                            className="bg-gray-800 p-6 rounded-xl max-w-md text-center border border-yellow-400"
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                        >
+                            <h2 className="text-2xl font-bold text-yellow-400 mb-4">🔐 Selamat Datang di Gate Puzzle!</h2>
+                            <p className="text-sm text-gray-300 mb-4">
+                                Tugas kamu adalah membuka pintu dengan menyalakan switch yang benar berdasarkan logika tertentu.
+                                Kamu punya waktu 15 detik untuk setiap level. Tekan "Cek Jawaban" setelah memilih switch!
+                            </p>
+                            <Button onPress={startGame} variant="solid" color="primary">
+                                🚀 Mulai Permainan
+                            </Button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <motion.h1
                 className="text-3xl font-bold mb-4 text-yellow-400"
                 initial={{ y: -30, opacity: 0 }}
