@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // import components from heroui
 import { Button } from '@heroui/react';
@@ -19,6 +20,8 @@ const FIRST_AND_THIRD_REEL = [TRUE_EMOJI, FALSE_EMOJI];
 const SECOND_REEL = ['∧', '∨', '¬'];
 
 export default function SlotMachine() {
+    // initialize state from intro
+    const [showIntro, setShowIntro] = useState(true);
 
     // initialize state 
     const [spinning, setSpinning] = useState(false);
@@ -31,6 +34,11 @@ export default function SlotMachine() {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const [finalSymbols, setFinalSymbols] = useState<string[]>(['', '', '']);
     const [hasGuessed, setHasGuessed] = useState(false);
+
+    // function start game
+    const startGame = () => {
+        setShowIntro(false);
+    };
 
     // get high score in localstorage in first time reload
     useEffect(() => {
@@ -155,38 +163,67 @@ export default function SlotMachine() {
 
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
-            <div className="w-full max-w-md p-6 bg-gradient-to-b from-gray-900 to-black rounded-lg border-4 border-yellow-500">
-                <h1 className="text-3xl font-bold mb-4 text-center">🎰 Slot Machine Logic </h1>
-
-                <div className="flex justify-center gap-4 mb-6">
-                    <Reel symbols={FIRST_AND_THIRD_REEL} spinning={reelTriggers[0]} resultSymbol={finalSymbols[0]} />
-                    <Reel symbols={SECOND_REEL} spinning={reelTriggers[1]} resultSymbol={finalSymbols[1]} />
-                    <Reel symbols={FIRST_AND_THIRD_REEL} spinning={reelTriggers[2]} resultSymbol={finalSymbols[2]} />
-                </div>
-
-                <Button onPress={handleSpin} isLoading={spinning} spinnerPlacement='start' color='warning' radius='sm' className='w-full px-6 py-2 text-black font-semibold text-md disabled:opacity-50 mb-4'>
-                    {spinning ? 'Spinning...' : 'Spin'}
-                </Button>
-
-                {isReadyToGuess && (
-                    <div className="flex gap-4 justify-center mb-4">
-                        <Button color='success' radius='sm' onPress={() => handleGuess(true)} disabled={hasGuessed} className='flex items-center gap-2 px-4 text-white font-semibold text-md disabled:opacity-50'>✅ True</Button>
-                        <Button radius='sm' onPress={() => handleGuess(false)} disabled={hasGuessed} className='flex items-center gap-2 bg-red-500 px-4 py-2 text-white font-semibold text-md disabled:opacity-50'>❌ False</Button>
-                    </div>
+            <AnimatePresence>
+                {showIntro && (
+                    <motion.div
+                        className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center px-6"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div
+                            className="bg-gray-800 p-6 rounded-xl max-w-md text-center border border-yellow-400"
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                        >
+                            <h2 className="text-2xl font-bold text-yellow-400 mb-4">🎰 Selamat Datang di Slot Machine!</h2>
+                            <p className="text-sm text-gray-300 mb-4">
+                                Putar reel dan tebak hasil logikanya! Kamu punya waktu 10 detik untuk menjawab dengan benar.
+                                Skormu akan bertambah jika benar — hati-hati, salah tebak bikin skormu balik ke nol!
+                            </p>
+                            <Button onPress={startGame} color="primary">
+                                🚀 Mulai Permainan
+                            </Button>
+                        </motion.div>
+                    </motion.div>
                 )}
+            </AnimatePresence>
 
-                {answerResult && (
-                    <div className="text-xl text-center font-semibold mt-2">
-                        {answerResult}
+            {!showIntro && (
+                <div className="w-full max-w-md p-6 bg-gradient-to-b from-gray-900 to-black rounded-lg border-4 border-yellow-500">
+                    <h1 className="text-3xl font-bold mb-4 text-center">🎰 Slot Machine Logic </h1>
+
+                    <div className="flex justify-center gap-4 mb-6">
+                        <Reel symbols={FIRST_AND_THIRD_REEL} spinning={reelTriggers[0]} resultSymbol={finalSymbols[0]} />
+                        <Reel symbols={SECOND_REEL} spinning={reelTriggers[1]} resultSymbol={finalSymbols[1]} />
+                        <Reel symbols={FIRST_AND_THIRD_REEL} spinning={reelTriggers[2]} resultSymbol={finalSymbols[2]} />
                     </div>
-                )}
 
-                <div className="flex justify-between text-sm text-gray-400 mt-6">
-                    <span>Skor: {score}</span>
-                    <span>High Score: {highScore}</span>
-                    <span>Waktu: {time}s</span>
+                    <Button onPress={handleSpin} isLoading={spinning} spinnerPlacement='start' color='warning' radius='sm' className='w-full px-6 py-2 text-black font-semibold text-md disabled:opacity-50 mb-4'>
+                        {spinning ? 'Spinning...' : 'Spin'}
+                    </Button>
+
+                    {isReadyToGuess && (
+                        <div className="flex gap-4 justify-center mb-4">
+                            <Button color='success' radius='sm' onPress={() => handleGuess(true)} disabled={hasGuessed} className='flex items-center gap-2 px-4 text-white font-semibold text-md disabled:opacity-50'>✅ True</Button>
+                            <Button radius='sm' onPress={() => handleGuess(false)} disabled={hasGuessed} className='flex items-center gap-2 bg-red-500 px-4 py-2 text-white font-semibold text-md disabled:opacity-50'>❌ False</Button>
+                        </div>
+                    )}
+
+                    {answerResult && (
+                        <div className="text-xl text-center font-semibold mt-2">
+                            {answerResult}
+                        </div>
+                    )}
+
+                    <div className="flex justify-between text-sm text-gray-400 mt-6">
+                        <span>Skor: {score}</span>
+                        <span>High Score: {highScore}</span>
+                        <span>Waktu: {time}s</span>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
