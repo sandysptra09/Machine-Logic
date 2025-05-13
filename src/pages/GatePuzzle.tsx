@@ -8,7 +8,8 @@ import { Button, Progress } from '@heroui/react';
 
 // import utils
 import { levels, SwitchState } from '@/utils/levels';
-
+import { playSound } from '@/utils/soundPlayer';
+import { TbSquareRoundedPlus } from 'react-icons/tb';
 export default function GatePuzzle() {
 
     // initialize state for intro
@@ -67,8 +68,12 @@ export default function GatePuzzle() {
             const result = levels[currentLevel].expression(switches);
             setIsDoorOpen(result);
 
-            if (!result) {
+            if (result) {
+                playSound('doorOpen');
+            }
+            else {
                 setShowError(true);
+                playSound('doorLocked');
                 setTimeout(() => resetGame(), 2000);
             }
         }

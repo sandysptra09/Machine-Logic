@@ -1,10 +1,21 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { booleanMaterials } from '@/data/booleanMaterials'
 import TruthTable from '@/components/Tables/TruthTable'
 
+// import utils
+import { playSound } from '@/utils/soundPlayer'
+
 export default function Homepage() {
+    
+    const [started] = useState(true)
+    useEffect(() => {
+    if (started) {
+        playSound('bgm')
+    }
+    }, [started])
+
     return (
         <div className='max-w-5xl mx-auto px-6 py-12 flex flex-col gap-6'>
             <h1 className="text-2xl font-bold text-emerald-600 mb-4">
