@@ -1,38 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 MachineLogic
 
-## Getting Started
+**MachineLogic** adalah proyek edukatif berbasis web yang menggabungkan **belajar logika Boolean** dengan **game interaktif yang seru**. Cocok buat kamu yang pengen paham cara kerja logika digital — baik buat pemula, pelajar, maupun yang cuma pengen main sambil mikir!
 
-First, run the development server:
+---
+
+## 🚀 Fitur Utama
+
+### 1. 📘 Homepage – Belajar Dasar Logika
+
+Mulai dari teori!  
+Halaman ini berisi penjelasan singkat dan padat tentang **logika Boolean** dan **gerbang logika**. Cocok buat kamu yang baru mulai atau mau mengingat-ingat lagi konsep dasarnya.
+
+### 2. 🎰 Slot Machine – Tebak Operasi Logikanya!
+
+Game sederhana tapi bikin mikir.  
+Putar 3 reel yang menghasilkan nilai Boolean acak, lalu tebak hasil dari operasi logika tertentu seperti **AND**, **OR**, atau **NOT**. Bisa seberapa akurat logika kamu?
+
+### 3. 🧩 Gate Puzzle – Pecahkan Tantangan Logika
+
+Puzzle interaktif berbasis level.  
+Aktifkan switch (true/false) untuk membuat output logika sesuai target. Semakin tinggi level, semakin rumit logikanya. Cocok buat kamu yang suka tantangan dan pengen ngelatih pola pikir logis.
+
+---
+
+## 🧰 Teknologi yang Digunakan
+
+Project ini dibangun menggunakan stack modern berbasis React dan beberapa library pendukung:
+
+- **Next.js 15** – Framework React untuk membuat aplikasi web yang cepat dan efisien, termasuk dukungan routing & rendering.
+- **TypeScript** – Bahasa JavaScript dengan static typing untuk pengalaman ngoding yang lebih aman dan maintainable.
+- **Tailwind CSS** – Utility-first CSS framework untuk styling yang fleksibel dan konsisten.
+- **Framer Motion** – Library animasi untuk transisi UI yang halus dan interaktif.
+- **Howler.js** – Untuk pengelolaan audio/suara dalam game.
+- **React Icons** – Paket ikon populer untuk mempercantik UI.
+- **HeroUI (React)** – Komponen UI berbasis Tailwind untuk tampilan antarmuka yang lebih polished.
+- **ESLint & Prettier** – Untuk menjaga konsistensi kode dan kualitas penulisan.
+
+---
+
+## 📦 Instalasi dan Menjalankan Proyek
 
 ```bash
+# Clone repositori
+git clone https://github.com/username/machine-logic.git
+cd machine-logic
+
+# Instal dependencies
+npm install
+
+# Jalankan server development
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 👥 Group Members
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Sandy Saputra** (2401446)
+- **Ghassan Ariq Muzakki** (2403902)
+- **Luthfil Hadi Surya Pangestu** (2401208)
+- **Juan Rezel Oktara Ramadhan** (2403469)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📜 License
 
-To learn more about Next.js, take a look at the following resources:
+MIT License – free to use for educational and development purposes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-{this is testing messagges}
+> 💡 _"Coding is not just about syntax, it's about logic and creativity."_
