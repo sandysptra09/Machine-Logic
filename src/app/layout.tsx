@@ -7,6 +7,7 @@ import { Providers } from "./providers";
 // import statics components
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import BGMSoundPlayer from "@/components/BGM/BGMSoundPlayer";
 
 export const metadata = {
   title: "Machine Logic",
@@ -30,6 +31,8 @@ export default function RootLayout({
         className={poppins.className}
       >
         <Providers >
+
+          <BGMSoundPlayer />
 
           <div className="">
 
