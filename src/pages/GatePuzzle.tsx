@@ -159,12 +159,12 @@ export default function GatePuzzle() {
             </motion.h1>
 
             <motion.p
-                className="mt-4 text-sm text-yellow-300 text-center max-w-md mb-4"
+                className="mt-4 text-sm text-yellow-300 text-center italic max-w-md mb-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
             >
-                🧠 Narasi: {levels[currentLevel].narration}
+                🧠 "{levels[currentLevel].narration}"
             </motion.p>
 
             <div className="w-full max-w-md mb-4">

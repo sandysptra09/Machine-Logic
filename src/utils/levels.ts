@@ -72,4 +72,43 @@ export const levels: Level[] = [
     description: '(A AND B AND C) OR (D AND F) = true',
     narration: 'Pilih antara kekuatan dari tiga saklar utama atau sinergi rahasia antara dua yang tersembunyi.',
   },
+  {
+    id: 10,
+    expression: ({ A, B, C, D, E = false }) => (A && !B && C) || (!C && D && E),
+    description: '(A AND NOT B AND C) OR (NOT C AND D AND E) = true',
+    narration: 'Di antara cahaya dan bayangan, hanya kombinasi yang bertolak belakang yang bisa membuka jalan. Pilih dengan hati-hati — satu gerakan salah bisa memadamkan semuanya.',
+  },
+  {
+    id: 11,
+    expression: ({ A, B, C, D, E = false, F = false }) =>
+      (A || B) && (C !== D) && E && !F,
+    description: '(A OR B) AND (C XOR D) AND E AND NOT F = true',
+    narration: 'Dalam pertentangan, terkandung sebuah jawaban. Namun satu saklar diam — yang tampaknya kecil — bisa menjadi penghalang terbesar.',
+  },
+  {
+    id: 12,
+    expression: ({ A, B, C, E = false }) => !(A && B && C) && E,
+    description: 'NOT (A AND B AND C) AND E = true',
+    narration: 'Kesempurnaan tidak selalu menyelamatkan. Dalam ketidaksempurnaan, gerbang diam-diam terbuka — namun hanya jika saklar tersembunyi turut menyala.',
+  },
+  {
+    id: 13,
+    expression: ({ A, B, D, F = false }) => A && (B || (D && !F)),
+    description: 'A AND (B OR (D AND NOT F)) = true',
+    narration: 'Satu kebenaran memimpin. Namun apakah kamu memilih jalan terang yang pasti, atau lorong rumit yang menyembunyikan jalan keluar?',
+  },
+  {
+    id: 14,
+    expression: ({ A, B, C, D, E = false, F = false }) =>
+      (A && B && !C) || (!D && E && F),
+    description: '(A AND B AND NOT C) OR (NOT D AND E AND F) = true',
+    narration: 'Dua pilihan. Dua nasib. Tapi hanya satu jalan yang bisa kamu tempuh — yang satu menawarkan kekuatan, yang lain ketenangan.',
+  },
+  {
+    id: 15,
+    expression: ({ A, B, C, D, E = false, F = false }) =>
+      ((A || B) && (C && D)) || (E && !F),
+    description: '((A OR B) AND (C AND D)) OR (E AND NOT F) = true',
+    narration: 'Terkadang kekuatan bersama tak cukup. Tapi jika rencana kedua telah siap, gerbang akan menyambutmu dengan cahaya kemenangan.',
+  }
 ];
