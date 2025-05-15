@@ -106,14 +106,14 @@ export default function SlotMachine() {
         }, 2000);
     };
 
-    // function handle stop
-    const handleStop = (symbol: string, index: number) => {
-        setResults(prev => {
-            const updated = [...prev];
-            updated[index] = symbol;
-            return updated;
-        });
-    };
+    // // function handle stop
+    // const handleStop = (symbol: string, index: number) => {
+    //     setResults(prev => {
+    //         const updated = [...prev];
+    //         updated[index] = symbol;
+    //         return updated;
+    //     });
+    // };
 
     // set ready to guess
     const isReadyToGuess = results.every(Boolean) && !spinning;
